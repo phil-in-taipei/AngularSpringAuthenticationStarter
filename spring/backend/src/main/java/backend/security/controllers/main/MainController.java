@@ -13,8 +13,10 @@ public class MainController {
         return "index";
     }
 
+    // @GetMapping(value = {"/{regex:\\w+}", "/**/{regex:\\w+}"})
    // @GetMapping(value = {"/{regex:[\\w-]+}", "/**/{regex:[\\w-]+}"})
     //public String forward404() {
     //    return "forward:/index";
+    // return "forward:/";
     //}
 }
