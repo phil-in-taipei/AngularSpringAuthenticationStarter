@@ -28,6 +28,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(
+                        "/login", "/info", "/contact",
                         "/api/auth/**", "/api/register/**", "/", "/favicon.ico",
                         "/js/**", "/css/**", "/img/**", "/webjars/**")
                 .permitAll()

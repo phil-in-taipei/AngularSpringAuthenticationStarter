@@ -10,6 +10,12 @@ const routes: Routes = [
   { path: 'register', component: RegistrationComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'info', component: InformationComponent },
+  {
+    path        : '**',
+    pathMatch   : 'full',
+    redirectTo: '',
+  }
+
 ];
 
 @NgModule({
