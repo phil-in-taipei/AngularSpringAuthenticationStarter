@@ -1,5 +1,7 @@
 sudo sysctl -w fs.inotify.max_user_watches=524288
 
-ng build --prod --output-path ../../spring/backend/static/angular --namedChunks=true --output-hashing none --watch
+ng build --prod --output-path ../../spring/backend/src/main/resources/static/js/angular --namedChunks=true --output-hashing none --watch
 
+ng build --aot --prod --output-hashing none
 
+ng build --output-path ../../spring/backend/src/main/resources/static/js/angular --output-hashing none --watch
