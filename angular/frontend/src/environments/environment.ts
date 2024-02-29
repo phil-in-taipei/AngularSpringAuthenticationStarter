@@ -3,7 +3,14 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiUrl: "http://localhost:8080",
+  authTimerAmount: 50000, //(50 seconds)
+  tokenRefreshHoursAmount: 0,
+  tokenRefreshMinsAmount: 3,
+  tokenRefreshSecondsAmount: 30,
+  tokenMinsAmount: 0,
+  tokenSecondsAmount: 50,
 };
 
 /*
