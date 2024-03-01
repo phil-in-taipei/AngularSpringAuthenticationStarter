@@ -15,6 +15,8 @@ export class RegistrationService {
   constructor(private http: HttpClient) { }
 
   submitUserRegistration(userRegistration: UserRegistrationModel) {
+    console.log("This is the payload in the service:")
+    console.log(userRegistration);
       return this.http.post<UserRegistrationResponseModel>(
         `${environment.apiUrl}/api/register/user`, userRegistration)
   }

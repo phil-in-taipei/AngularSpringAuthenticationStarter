@@ -1,9 +1,10 @@
 export interface UserRegistrationModel {
-    givenName: string;
-    surname: string;
-    username: string;
-    password: string;
-    passwordConfirmation: string;
+    givenName: string | null;
+    surname: string | null;
+    email: string | null;
+    username: string | null;
+    password: string | null;
+    passwordConfirmation: string | null;
  }
 
  export interface UserRegistrationResponseModel {

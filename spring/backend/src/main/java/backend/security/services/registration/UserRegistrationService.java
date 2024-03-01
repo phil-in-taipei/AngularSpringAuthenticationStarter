@@ -43,8 +43,8 @@ public class UserRegistrationService {
         userRepository.save(user);
         return RegistrationResponse.builder()
                 .message(
-                        "Account successfully created for user: " +
-                                user.getUsername()
+                        "Account successfully created for user"// +
+                                //user.getUsername()
                 )
                 .build();
     }
