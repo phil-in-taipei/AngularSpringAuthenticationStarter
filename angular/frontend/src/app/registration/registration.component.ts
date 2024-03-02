@@ -1,6 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { AsyncPipe, NgIf } from '@angular/common';
-import { Subscription, catchError, throwError } from 'rxjs';
+import { 
+  Subscription, catchError, throwError, 
+  Observer, Observable, of 
+} from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { 
@@ -9,10 +12,10 @@ import {
 import { 
   UnauthenticatedFooterComponent 
 } from '../unauthenticated-layout/unauthenticated-footer/unauthenticated-footer.component';
-import { Observable, of } from 'rxjs';
 
 import { UserRegistrationModel, 
-  UserRegistrationResponseModel } from '../models/user-registration.model';
+  UserRegistrationResponseModel 
+} from '../models/user-registration.model';
 import { RegistrationService } from './registration.service';
 
 @Component({
@@ -34,7 +37,7 @@ export class RegistrationComponent implements OnDestroy{
 
   isFormPasswordsError = false;
 
-  private registrationSubscription: Subscription | undefined;
+  private registrationSubscription: Subscription|undefined;
 
   userRegistrationData: UserRegistrationModel = {
     username:'',
@@ -43,24 +46,49 @@ export class RegistrationComponent implements OnDestroy{
     surname:'',
     givenName:'',
     email: ''
-
   };
 
-  registrationResponse$: Observable<
-    UserRegistrationResponseModel|undefined> = of(undefined);
+  private registrationResponse$: Observable<
+    UserRegistrationResponseModel|undefined
+    > = of(undefined);
 
-  passwordErrorMsg:string = 'The passwords must match!'
+  passwordErrorMsg: string = 'The passwords must match!'
 
-  apiErrorMsg: string | undefined;
+  apiErrorMsg: string|undefined;
 
-  apiSuccessResponse: UserRegistrationResponseModel | undefined;
+  apiSuccessResponse: UserRegistrationResponseModel|undefined;
 
 
   ngOnInit(): void {
 
   }
 
-  onSubmitRegistrationForm(form: NgForm) {
+  clearRegistrationData():void {
+    this.userRegistrationData = {
+      username:'',
+      password:'',
+      passwordConfirmation:'',
+      surname:'',
+      givenName:'',
+      email: ''
+  
+    }
+  }
+
+  implementRequestSubscription(): void {
+    this.registrationResponse$
+      .subscribe({
+        next: (response) => {
+          this.apiSuccessResponse = response;
+        },
+        error: (error) => {
+          console.log(error)
+          this.apiErrorMsg = error;
+        }});
+  }
+
+
+  onSubmitRegistrationForm(form: NgForm): void {
     console.log('submit resistration ...')
     console.log(form.value);
     if (form.invalid) {
@@ -83,34 +111,17 @@ export class RegistrationComponent implements OnDestroy{
     this.userRegistrationData.surname = form.value.surname;
     this.userRegistrationData.givenName = form.value.given_name
     console.log(this.userRegistrationData);
-    this.registrationResponse$ = this.registrationService
-      .submitUserRegistration(this.userRegistrationData).pipe(
-        catchError((error) => {
-          let errorMessage = 'An error occurred during registration.';
-          if (error.error && error.error.message) {
-            errorMessage = error.error.message;
-          }
-          return throwError(errorMessage);
-        })
-      );
-      this.registrationResponse$.subscribe(
-        (response) => {
-          this.apiSuccessResponse = response
-          form.reset();
-        },
-        (error) => {
-          this.apiErrorMsg = error;
-          form.reset();
-        }
-      );
+    this.setUpRequestSubscription();
+    this.implementRequestSubscription();
+    form.reset();
   }
 
 
-  onClearRegistrationFormError() {
+  onClearRegistrationFormError(): void {
     this.isFormPasswordsError = false;
   }
 
-  onClearRegistrationMessage() {
+  onClearRegistrationMessage(): void {
     this.registrationResponse$ = of(undefined);
   }
 
@@ -119,5 +130,20 @@ export class RegistrationComponent implements OnDestroy{
       this.registrationSubscription.unsubscribe();
     }
   }
+
+  setUpRequestSubscription(): void {
+    this.registrationResponse$ = this.registrationService
+    .submitUserRegistration(this.userRegistrationData).pipe(
+      catchError((error) => {
+        console.log(error)
+        let errorMessage = 'An error occurred during registration.';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
 
 }
