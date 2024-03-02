@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { AsyncPipe, NgIf } from '@angular/common';
+import { Subscription, catchError, throwError } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { 
@@ -27,11 +28,13 @@ import { RegistrationService } from './registration.service';
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css'
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnDestroy{
 
   constructor(private registrationService: RegistrationService) { }
 
   isFormPasswordsError = false;
+
+  private registrationSubscription: Subscription | undefined;
 
   userRegistrationData: UserRegistrationModel = {
     username:'',
@@ -47,6 +50,11 @@ export class RegistrationComponent {
     UserRegistrationResponseModel|undefined> = of(undefined);
 
   passwordErrorMsg:string = 'The passwords must match!'
+
+  apiErrorMsg: string | undefined;
+
+  apiSuccessResponse: UserRegistrationResponseModel | undefined;
+
 
   ngOnInit(): void {
 
@@ -76,8 +84,25 @@ export class RegistrationComponent {
     this.userRegistrationData.givenName = form.value.given_name
     console.log(this.userRegistrationData);
     this.registrationResponse$ = this.registrationService
-      .submitUserRegistration(this.userRegistrationData);
-    form.reset();
+      .submitUserRegistration(this.userRegistrationData).pipe(
+        catchError((error) => {
+          let errorMessage = 'An error occurred during registration.';
+          if (error.error && error.error.message) {
+            errorMessage = error.error.message;
+          }
+          return throwError(errorMessage);
+        })
+      );
+      this.registrationResponse$.subscribe(
+        (response) => {
+          this.apiSuccessResponse = response
+          form.reset();
+        },
+        (error) => {
+          this.apiErrorMsg = error;
+          form.reset();
+        }
+      );
   }
 
 
@@ -87,6 +112,12 @@ export class RegistrationComponent {
 
   onClearRegistrationMessage() {
     this.registrationResponse$ = of(undefined);
+  }
+
+  ngOnDestroy(): void {
+    if (this.registrationSubscription) {
+      this.registrationSubscription.unsubscribe();
+    }
   }
 
 }

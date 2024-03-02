@@ -9,21 +9,19 @@
               data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           </div>
-          <div *ngIf="registrationResponse$ | async as response" class="container">
-            <div *ngIf="response.message == 'Account successfully created for user'">
+          <div *ngIf='apiErrorMsg'>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <h3>{{ apiErrorMsg }}</h3>
+              <button type="button" class="btn-close" (click)="onClearRegistrationFormError()"
+              data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          </div>
+          <div *ngIf="apiSuccessResponse" class="container">
+            <div *ngIf="apiSuccessResponse.message == 'Account successfully created for user'">
                 <div data-testid="registration-success-msg"
                   class="alert alert-primary alert-dismissible fade show" 
                   role="alert">
-                  <h3>{{ response.message }}</h3>
-                  <button type="button" class="btn-close" (click)="onClearRegistrationMessage()"
-                  data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              </div>
-              <div *ngIf="response.message == 'Error creating user!' || response.message">
-                <div data-testid="registration-error-msg"
-                class="alert alert-danger alert-dismissible fade show" 
-                role="alert">
-                  <h3>Registration Error!</h3>
+                  <h3>{{ apiSuccessResponse.message }}</h3>
                   <button type="button" class="btn-close" (click)="onClearRegistrationMessage()"
                   data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
