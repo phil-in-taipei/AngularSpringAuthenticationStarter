@@ -1,9 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { AsyncPipe, NgIf } from '@angular/common';
-import { 
-  Subscription, catchError, throwError, 
-  Observer, Observable, of 
-} from 'rxjs';
+import { first } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { 
@@ -31,13 +28,9 @@ import { RegistrationService } from './registration.service';
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css'
 })
-export class RegistrationComponent implements OnDestroy{
+export class RegistrationComponent {
 
   constructor(private registrationService: RegistrationService) { }
-
-  isFormPasswordsError = false;
-
-  private registrationSubscription: Subscription|undefined;
 
   userRegistrationData: UserRegistrationModel = {
     username:'',
@@ -48,20 +41,12 @@ export class RegistrationComponent implements OnDestroy{
     email: ''
   };
 
-  private registrationResponse$: Observable<
-    UserRegistrationResponseModel|undefined
-    > = of(undefined);
 
-  passwordErrorMsg: string = 'The passwords must match!'
+  passwordErrorMsg: string|undefined = undefined;
 
-  apiErrorMsg: string|undefined;
+  apiErrorMsg: string|undefined = undefined;
 
-  apiSuccessResponse: UserRegistrationResponseModel|undefined;
-
-
-  ngOnInit(): void {
-
-  }
+  apiSuccessResponse: UserRegistrationResponseModel|undefined = undefined;
 
   clearRegistrationData():void {
     this.userRegistrationData = {
@@ -75,75 +60,59 @@ export class RegistrationComponent implements OnDestroy{
     }
   }
 
-  implementRequestSubscription(): void {
-    this.registrationResponse$
-      .subscribe({
-        next: (response) => {
-          this.apiSuccessResponse = response;
-        },
-        error: (error) => {
-          console.log(error)
-          this.apiErrorMsg = error;
-        }});
+  clearTemplateMessages(): void {
+    this.passwordErrorMsg = undefined;
+    this.apiSuccessResponse = undefined;
+    this.apiErrorMsg = undefined;
   }
 
+  implementRegistrationRequest(): void {
+    this.registrationService
+      .submitUserRegistration(this.userRegistrationData)
+        .pipe(first())
+        .subscribe({
+          next: (response) => {
+            this.apiSuccessResponse = response;
+          },
+          error: (error) => {
+            this.apiErrorMsg = 'An error occurred during registration.';
+            if (error.error && error.error.message) {
+              this.apiErrorMsg = error.error.message;
+            }}
+        });
+  }
+
+  onClearApiError(): void {
+    this.apiErrorMsg = undefined;
+  }
+
+  onClearApiSuccessResponse(): void {
+    this.apiSuccessResponse = undefined;
+  }
+
+  onClearFormPasswordError(): void {
+    this.passwordErrorMsg = undefined;
+  }
 
   onSubmitRegistrationForm(form: NgForm): void {
-    console.log('submit resistration ...')
-    console.log(form.value);
+    this.clearTemplateMessages();
     if (form.invalid) {
-      console.log('registration form is invalid')
-      console.log(form.errors);
       return;
     }
     if (form.value.password !== form.value.re_password) {
-      console.log('passwords do not match invalid')
-      this.isFormPasswordsError = true;
+      this.passwordErrorMsg = 'Registration Error. Passwords Must Match!';
       form.reset();
       return;
     }
-    console.log('valid!')
-    console.log(form.value.username);
     this.userRegistrationData.username = form.value.username;
     this.userRegistrationData.password = form.value.password;
     this.userRegistrationData.passwordConfirmation = form.value.re_password;
     this.userRegistrationData.email = form.value.contact_email;
     this.userRegistrationData.surname = form.value.surname;
     this.userRegistrationData.givenName = form.value.given_name
-    console.log(this.userRegistrationData);
-    this.setUpRequestSubscription();
-    this.implementRequestSubscription();
+    this.implementRegistrationRequest();
     form.reset();
+    this.clearRegistrationData();
   }
-
-
-  onClearRegistrationFormError(): void {
-    this.isFormPasswordsError = false;
-  }
-
-  onClearRegistrationMessage(): void {
-    this.registrationResponse$ = of(undefined);
-  }
-
-  ngOnDestroy(): void {
-    if (this.registrationSubscription) {
-      this.registrationSubscription.unsubscribe();
-    }
-  }
-
-  setUpRequestSubscription(): void {
-    this.registrationResponse$ = this.registrationService
-    .submitUserRegistration(this.userRegistrationData).pipe(
-      catchError((error) => {
-        console.log(error)
-        let errorMessage = 'An error occurred during registration.';
-        if (error.error && error.error.message) {
-          errorMessage = error.error.message;
-        }
-        return throwError(() => new Error(errorMessage));
-      })
-    );
-  }
-
 
 }
