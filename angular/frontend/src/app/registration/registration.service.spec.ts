@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, flush, flushMicrotasks  } from '@angular/core/testing';
+import { TestBed, fakeAsync, flush  } from '@angular/core/testing';
 import { HttpTestingController, HttpClientTestingModule
 } from '@angular/common/http/testing';
 import { environment } from '../../environments/environment';
@@ -73,7 +73,10 @@ fdescribe('RegistrationService', () => {
           url:`${environment.apiUrl}/api/register/user`,
         });
 
-        request.flush(httpRegistrationResponseFailure1, { status: 400, statusText: 'Bad Request' });
+        request.flush(
+          httpRegistrationResponseFailure1, 
+          { status: 400, statusText: 'Bad Request' }
+        );
     }));
 
 
@@ -94,7 +97,10 @@ fdescribe('RegistrationService', () => {
           url:`${environment.apiUrl}/api/register/user`,
         });
 
-        request.flush(httpRegistrationResponseFailure3, { status: 400, statusText: 'Bad Request' });
+        request.flush(
+          httpRegistrationResponseFailure3, 
+          { status: 400, statusText: 'Bad Request' }
+        );
     }));
 
     it('should return a failure message upon unsuccessfully submitting ' +
@@ -113,7 +119,10 @@ fdescribe('RegistrationService', () => {
           url:`${environment.apiUrl}/api/register/user`,
         });
 
-        request.flush(httpRegistrationResponseFailure2, { status: 400, statusText: 'Bad Request' });
+        request.flush(
+          httpRegistrationResponseFailure2, 
+          { status: 400, statusText: 'Bad Request' }
+        );
 
     }));
 
