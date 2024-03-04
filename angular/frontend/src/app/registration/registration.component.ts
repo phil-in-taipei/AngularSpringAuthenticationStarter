@@ -32,33 +32,11 @@ export class RegistrationComponent {
 
   constructor(private registrationService: RegistrationService) { }
 
-  userRegistrationData: UserRegistrationModel = {
-    username:'',
-    password:'',
-    passwordConfirmation:'',
-    surname:'',
-    givenName:'',
-    email: ''
-  };
-
-
   passwordErrorMsg: string|undefined = undefined;
 
   apiErrorMsg: string|undefined = undefined;
 
   apiSuccessResponse: UserRegistrationResponseModel|undefined = undefined;
-
-  clearRegistrationData():void {
-    this.userRegistrationData = {
-      username:'',
-      password:'',
-      passwordConfirmation:'',
-      surname:'',
-      givenName:'',
-      email: ''
-  
-    }
-  }
 
   clearTemplateMessages(): void {
     this.passwordErrorMsg = undefined;
@@ -66,9 +44,9 @@ export class RegistrationComponent {
     this.apiErrorMsg = undefined;
   }
 
-  implementRegistrationRequest(): void {
+  implementRegistrationRequest(userRegistrationData: UserRegistrationModel): void {
     this.registrationService
-      .submitUserRegistration(this.userRegistrationData)
+      .submitUserRegistration(userRegistrationData)
         .pipe(first())
         .subscribe({
           next: (response) => {
@@ -104,15 +82,15 @@ export class RegistrationComponent {
       form.reset();
       return;
     }
-    this.userRegistrationData.username = form.value.username;
-    this.userRegistrationData.password = form.value.password;
-    this.userRegistrationData.passwordConfirmation = form.value.re_password;
-    this.userRegistrationData.email = form.value.contact_email;
-    this.userRegistrationData.surname = form.value.surname;
-    this.userRegistrationData.givenName = form.value.given_name
-    this.implementRegistrationRequest();
+    this.implementRegistrationRequest({
+      username: form.value.username,
+      password: form.value.password,
+      passwordConfirmation: form.value.re_password,
+      email: form.value.contact_email,
+      surname: form.value.surname,
+      givenName: form.value.given_name
+    });
     form.reset();
-    this.clearRegistrationData();
   }
 
 }
