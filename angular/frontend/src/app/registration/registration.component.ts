@@ -53,6 +53,8 @@ export class RegistrationComponent {
             this.apiSuccessResponse = response;
           },
           error: (error) => {
+            console.log('this is the error object:')
+            console.log(error)
             this.apiErrorMsg = 'An error occurred during registration.';
             if (error.error && error.error.message) {
               this.apiErrorMsg = error.error.message;
