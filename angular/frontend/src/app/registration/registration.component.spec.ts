@@ -1,14 +1,17 @@
 import { ComponentFixture, TestBed, fakeAsync, tick  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { RegistrationComponent } from './registration.component';
 import { RegistrationService } from './registration.service';
-import { userRegistrationData, 
+import { 
+  userRegistrationData, 
   httpRegistrationResponseSuccess, 
   httpRegistrationResponseFailure1,
-  httpRegistrationResponseFailure2 } 
+  httpRegistrationResponseFailure2,
+  httpRegistrationResponseFailure3
+} 
   from '../test-data/registration-tests/registration-data';
 import { UserRegistrationResponseModel } from '../models/user-registration.model';
 import { 
@@ -57,7 +60,7 @@ describe('RegistrationComponent', () => {
   it('onSubmitRegistrationForm function should submit the registration service form ' + 
   'to the registration service and clear the form', 
     fakeAsync(() => {
-      registrationService.submitUserRegistration.and.returnValue(of(httpRegistrationResponseFailure2));
+      registrationService.submitUserRegistration.and.returnValue(of(httpRegistrationResponseSuccess));
       const form = <NgForm>{
         invalid: false,
         value: {
@@ -85,27 +88,106 @@ describe('RegistrationComponent', () => {
 
   it('should display success message if registration service indicates  ' +
   'form submission for creating new user was successful', 
-  fakeAsync(() => {
-    registrationService.submitUserRegistration.and.returnValue(of(httpRegistrationResponseSuccess));
-    const form = <NgForm>{
-      invalid: false,
-      value: {
-        username: userRegistrationData.username,
-        password: userRegistrationData.password,
-        re_password: userRegistrationData.passwordConfirmation,
-        contact_email: userRegistrationData.email,
-        surname: userRegistrationData.surname,
-        given_name: userRegistrationData.givenName,
-      },
-      reset: () => {}, // Mock the reset method
-    };
-    const formSpy = spyOn(form, 'reset');
-    component.onSubmitRegistrationForm(form);
+    fakeAsync(() => {
+      registrationService.submitUserRegistration.and.returnValue(of(httpRegistrationResponseSuccess));
+      const form = <NgForm>{
+        invalid: false,
+        value: {
+          username: userRegistrationData.username,
+          password: userRegistrationData.password,
+          re_password: userRegistrationData.passwordConfirmation,
+          contact_email: userRegistrationData.email,
+          surname: userRegistrationData.surname,
+          given_name: userRegistrationData.givenName,
+        },
+        reset: () => {}, // Mock the reset method
+      };
+      const formSpy = spyOn(form, 'reset');
+      component.onSubmitRegistrationForm(form);
 
-    tick(1000);
-    fixture.detectChanges();
-    let sucessMsg = findEl(fixture, 'registration-success-msg');
-    expect(sucessMsg.nativeElement.textContent).toBe('Account successfully created for user');
-}));
+      tick(1000);
+      fixture.detectChanges();
+      let sucessMsg = findEl(fixture, 'registration-success-msg');
+      expect(sucessMsg.nativeElement.textContent).toBe('Account successfully created for user');
+  }));
+
+  it('should display error message if registration service indicates there has been an error ' +
+  'due to username already existing)', 
+    fakeAsync(() => {
+      const errorObject = { error: httpRegistrationResponseFailure2 }; // Construct error object
+      registrationService.submitUserRegistration.and
+        .returnValue(throwError(()=> errorObject));
+      const form = <NgForm>{
+        invalid: false,
+        value: {
+          username: userRegistrationData.username,
+          password: userRegistrationData.password,
+          re_password: userRegistrationData.passwordConfirmation,
+          contact_email: userRegistrationData.email,
+          surname: userRegistrationData.surname,
+          given_name: userRegistrationData.givenName,
+        },
+        reset: () => {}, // Mock the reset method
+      };
+      const formSpy = spyOn(form, 'reset');
+      component.onSubmitRegistrationForm(form);
+
+      tick(1000);
+      fixture.detectChanges();
+      let errorMsg = findEl(fixture, 'registration-api-failure-msg');
+      expect(errorMsg.nativeElement.textContent).toBe(httpRegistrationResponseFailure2.message);
+  }));
+
+
+  it('should display error message if registration service indicates there has been an error ' +
+  'due to submission of incomplete registration data)', 
+    fakeAsync(() => {
+      const errorObject = { error: httpRegistrationResponseFailure3 }; // Construct error object
+      registrationService.submitUserRegistration.and
+        .returnValue(throwError(()=> errorObject));
+      const form = <NgForm>{
+        invalid: false,
+        value: {
+          username: userRegistrationData.username,
+          password: userRegistrationData.password,
+          re_password: userRegistrationData.passwordConfirmation,
+          contact_email: userRegistrationData.email,
+          surname: userRegistrationData.surname,
+          given_name: userRegistrationData.givenName,
+        },
+        reset: () => {}, // Mock the reset method
+      };
+      const formSpy = spyOn(form, 'reset');
+      component.onSubmitRegistrationForm(form);
+
+      tick(1000);
+      fixture.detectChanges();
+      let errorMsg = findEl(fixture, 'registration-api-failure-msg');
+      expect(errorMsg.nativeElement.textContent).toBe(httpRegistrationResponseFailure3.message);
+  }));
+
+  it('should display error message if the user passes in two different passwords ', 
+    fakeAsync(() => {
+      const form = <NgForm>{
+        invalid: false,
+        value: {
+          username: userRegistrationData.username,
+          password: userRegistrationData.password,
+          re_password: "differentPassword",
+          contact_email: userRegistrationData.email,
+          surname: userRegistrationData.surname,
+          given_name: userRegistrationData.givenName,
+        },
+        reset: () => {}, // Mock the reset method
+      };
+      const formSpy = spyOn(form, 'reset');
+      component.onSubmitRegistrationForm(form);
+
+      tick(1000);
+      fixture.detectChanges();
+      let errorMsg = findEl(fixture, 'password-confirmation-failure-msg');
+      expect(errorMsg.nativeElement.textContent).toBe(httpRegistrationResponseFailure1.message);
+  }));
+
 
 });

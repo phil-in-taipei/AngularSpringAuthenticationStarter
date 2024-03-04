@@ -53,10 +53,9 @@ export class RegistrationComponent {
             this.apiSuccessResponse = response;
           },
           error: (error) => {
-            console.log('this is the error object:')
-            console.log(error)
             this.apiErrorMsg = 'An error occurred during registration.';
             if (error.error && error.error.message) {
+              console.log(error.error)
               this.apiErrorMsg = error.error.message;
             }}
         });
@@ -76,11 +75,12 @@ export class RegistrationComponent {
 
   onSubmitRegistrationForm(form: NgForm): void {
     this.clearTemplateMessages();
+    console.log(form)
     if (form.invalid) {
       return;
     }
     if (form.value.password !== form.value.re_password) {
-      this.passwordErrorMsg = 'Registration Error. Passwords Must Match!';
+      this.passwordErrorMsg = 'The passwords do not match. Please try again.';
       form.reset();
       return;
     }
