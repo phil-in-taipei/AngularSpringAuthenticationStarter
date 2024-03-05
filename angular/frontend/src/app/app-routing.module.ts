@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { AuthGuard } from './authentication/auth.guard';
 import { RouterModule, Routes } from '@angular/router';
 import { ContactComponent } from './contact/contact.component';
 import { InformationComponent } from './information/information.component';
@@ -10,6 +11,12 @@ const routes: Routes = [
   { path: 'register', component: RegistrationComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'info', component: InformationComponent },
+  { 
+    path: 'authenticated-user', 
+    loadChildren: () => import('./authenticated-user/authenticated-user.module')
+      .then(m => m.AuthenticatedUserModule), 
+    canActivate: [AuthGuard] 
+  },  
   {
     path        : '**',
     pathMatch   : 'full',

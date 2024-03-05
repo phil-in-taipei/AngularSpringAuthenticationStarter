@@ -11,6 +11,7 @@ import { CustomSerializer } from './shared-utils/router-state.util';
 import { reducers, metaReducers } from './reducers';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { AuthenticatedUserModule } from './authenticated-user/authenticated-user.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { environment } from '../environments/environment';
     StoreModule.forRoot(reducers, { metaReducers }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([]),
-    StoreRouterConnectingModule.forRoot({stateKey:'router'})
+    StoreRouterConnectingModule.forRoot({stateKey:'router'}),
+    AuthenticatedUserModule
   ],
   providers: [
     { provide: RouterStateSerializer, useClass: CustomSerializer },
