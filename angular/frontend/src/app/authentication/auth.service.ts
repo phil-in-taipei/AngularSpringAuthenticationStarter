@@ -38,6 +38,10 @@ export class AuthService {
     localStorage.removeItem('userId');
   }
 
+  clearLoginError() {
+    this.loginErrorListener.next(false);
+  }
+
   private clearNgrxStore():void {
     //this.store.dispatch(new UserProfileCleared());
   }
