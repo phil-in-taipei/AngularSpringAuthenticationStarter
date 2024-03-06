@@ -10,3 +10,4 @@ export interface UserRegistrationModel {
  export interface UserRegistrationResponseModel {
     message: string;
  }
+ 
