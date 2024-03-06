@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../../authentication/auth.service';
 
 @Component({
   selector: 'app-authenticated-header',
@@ -8,4 +9,9 @@ import { Component } from '@angular/core';
 })
 export class AuthenticatedHeaderComponent {
 
+  constructor(private authService: AuthService) {}
+
+  onLogout() {
+    this.authService.logout();
+  }
 }

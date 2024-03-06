@@ -14,3 +14,46 @@ import {
     UserProfileRequested, UserProfileSaved,
 } from './user.actions';
 
+
+
+
+@Injectable()
+    export class UserEffects {
+    
+      loadUserProfile$ = createEffect(() => {
+        return this.actions$
+          .pipe(
+            ofType<UserProfileRequested>(UserProfileActionTypes.UserProfileRequested),
+            withLatestFrom(this.store.pipe(select(selectUserProfile))),
+            filter(([action, userProfileLoaded]) => !userProfileLoaded),
+            mergeMap(action => this.userService.fetchUserProfile()
+              .pipe(
+                map(usrProfile => new UserProfileLoaded({ usrProfile })),
+                catchError(err => {
+                  return throwError(() => err);
+                })
+              ))
+          )
+      });
+
+      submitEditedProfile$ = createEffect(() => {
+        return this.actions$
+          .pipe(
+            ofType<UserProfileSubmitted>(UserProfileActionTypes.UserProfileSubmitted),
+            mergeMap(action => this.userService.editUserProfile(action.payload.submissionForm)
+                .pipe(
+                    map(usrProfile => new UserProfileSaved({ usrProfile })),
+                    catchError(err => {
+                      this.store.dispatch(
+                          new UserProfileSubmissionCancelled({ err })
+                      );
+                      return of();
+                  })
+                ),
+              )
+          )
+      });
+
+      constructor(private actions$: Actions, private userService: UserService,
+          private store: Store<AppState>) {}
+}

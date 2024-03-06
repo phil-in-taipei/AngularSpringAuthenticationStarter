@@ -6,9 +6,14 @@ import { Subject } from 'rxjs';
 import {Store} from '@ngrx/store';
 import { environment } from '../../environments/environment';
 import { AuthDataModel } from '../models/auth-data.model';
-import { AuthLoginModel, AuthLoginResponseModel, 
-  AuthTokenRefreshResponseModel } from '../models/auth-login.model';
+import { 
+  AuthLoginModel, AuthLoginResponseModel, 
+  AuthTokenRefreshResponseModel 
+} from '../models/auth-login.model';
 import { AppState } from './../reducers';
+import { 
+  UserProfileCleared 
+} from '../authenticated-user/user/user-state/user.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +48,7 @@ export class AuthService {
   }
 
   private clearNgrxStore():void {
-    //this.store.dispatch(new UserProfileCleared());
+    this.store.dispatch(new UserProfileCleared());
   }
 
 

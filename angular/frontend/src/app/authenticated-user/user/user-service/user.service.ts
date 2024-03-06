@@ -21,12 +21,12 @@ export class UserService {
   ) { }
 
   fetchUserProfile(): Observable<UserProfileModel> {
-    //console.log('fetching user profile ....');
+    console.log('fetching user profile ....');
     let token = this.authService.getAuthToken();
     return this.http.get<UserProfileModel>(
       `${environment.apiUrl}/api/user/authenticated`,
       { headers: new HttpHeaders(
-         { 'Authorization': `Token ${token}` }
+         { 'Authorization': `Bearer ${token}` }
         ) 
       }
     );
@@ -41,7 +41,7 @@ export class UserService {
     return this.http.patch<UserProfileModel>(
       `${environment.apiUrl}/api/user/update`, submissionForm,
       {
-        headers: new HttpHeaders({ 'Authorization': `Token ${token}` })
+        headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` })
       });
   }
 }
