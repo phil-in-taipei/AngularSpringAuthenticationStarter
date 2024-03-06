@@ -38,6 +38,18 @@ export function userProfileReducer(
                  errorMessage: undefined 
             };
 
+        case UserProfileActionTypes.UserProfileRequestCancelled:
+            console.log(action.payload);
+            let userErrorMessage: string = "Error retrieving user information!";
+            if (action.payload.err.error.message) {
+                //console.log(action.payload.err.error.message)
+                userErrorMessage = action.payload.err.error.message;
+            }
+            return {
+                ...state,  successMessage: undefined,
+                errorMessage: userErrorMessage
+            }
+
         case UserProfileActionTypes.UserProfileSaved:
             return {
                 errorMessage: undefined,
@@ -49,7 +61,7 @@ export function userProfileReducer(
         case UserProfileActionTypes.UserProfileSubmissionCancelled:
             console.log('error adding savings account!');
             console.log(action.payload);
-            let errorMessage: string = "Error! Savings Account Submission Failed!";
+            let errorMessage: string = "Error! Update Submission Failed!";
             if (action.payload.err.error.message) {
                 //console.log(action.payload.err.error.message)
                 errorMessage = action.payload.err.error.message;

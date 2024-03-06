@@ -35,6 +35,48 @@ export class AuthService {
     private store: Store<AppState>
   ) { }
 
+  autoAuthUser(): void {
+    console.log('getting auth data .....')
+    const authInformation = this.getAuthData();
+    if (authInformation) {
+      if (authInformation.accessExpDate && authInformation.token &&
+          authInformation.refreshExp && authInformation.refresh) {
+          console.log('Auth info in local storage:')
+          console.log('this is when tokens will expire on reload:')
+          console.log(authInformation.accessExpDate);
+          console.log(authInformation.refreshExp);
+          const now = new Date();
+          if(authInformation.refreshExp > now) {
+            console.log('refresh token is not expired. ' + 
+              'Setting token variables and authentication status to true...')
+            this.isAuthenticated = true;
+            this.authStatusListener.next(true);
+            this.token = authInformation.token;
+            this.tokenExpTime = new Date(authInformation.accessExpDate);
+            this.refresh = authInformation.refresh;
+            this.refreshExpTime = new Date(authInformation.refreshExp);
+            let timeUntilTokenExp = new Date().getTime() - this.tokenExpTime.getTime();
+            console.log('reseting timer ....')
+            this.setAuthTimer(timeUntilTokenExp); // if the value is negative, the timer will
+                                                  // immediately trigger refreshTokenOrLogout();
+            this.router.navigate(['/authenticated-user/user-profile']);
+          } else {
+            console.log('refresh token expired. Logging out...')
+            this.logout();
+            //return;
+          }
+      } else {
+        console.log('Token info incomplete. Logging out...');
+        this.logout();
+        //return;
+      }
+    } else {
+      console.log('Token info undefined. Logging out...');
+        this.logout();
+    }
+  }
+
+
   private clearLocalStorage():void {
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');

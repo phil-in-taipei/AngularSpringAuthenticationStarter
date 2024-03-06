@@ -11,7 +11,8 @@ import { UserService } from '../user-service/user.service';
 import { 
     UserProfileActionTypes, UserProfileSubmitted, 
     UserProfileSubmissionCancelled, UserProfileLoaded, 
-    UserProfileRequested, UserProfileSaved,
+    UserProfileRequested, UserProfileRequestCancelled, 
+    UserProfileSaved,
 } from './user.actions';
 
 
@@ -30,9 +31,13 @@ import {
               .pipe(
                 map(usrProfile => new UserProfileLoaded({ usrProfile })),
                 catchError(err => {
-                  return throwError(() => err);
+                  this.store.dispatch(
+                      new UserProfileRequestCancelled({ err })
+                  );
+                  return of();
                 })
-              ))
+              )
+            )
           )
       });
 
@@ -54,6 +59,9 @@ import {
           )
       });
 
-      constructor(private actions$: Actions, private userService: UserService,
-          private store: Store<AppState>) {}
+      constructor(
+        private actions$: Actions, 
+        private userService: UserService,
+        private store: Store<AppState>
+      ) {}
 }
