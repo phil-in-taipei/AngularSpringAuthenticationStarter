@@ -59,7 +59,7 @@ export class AuthService {
             console.log('reseting timer ....')
             this.setAuthTimer(timeUntilTokenExp); // if the value is negative, the timer will
                                                   // immediately trigger refreshTokenOrLogout();
-            this.router.navigate(['/authenticated-user/user-profile']);
+            this.router.navigate(['authenticated-user', 'user-profile']);
           } else {
             console.log('refresh token expired. Logging out...')
             this.logout();
@@ -169,9 +169,11 @@ export class AuthService {
     return this.loginErrorListener.asObservable();
   }
 
-  login(username: string, password: string) {
+  login(username: string, password: string): void {
     const authData: AuthLoginModel = {username: username, password: password};
-    this.http.post<AuthLoginResponseModel>(`${environment.apiUrl}/api/auth/authenticate`, authData)
+    this.http.post<AuthLoginResponseModel>(
+      `${environment.apiUrl}/api/auth/authenticate`, authData
+      )
       .subscribe(response => {
         console.log('This is the login response:')
         console.log(response)

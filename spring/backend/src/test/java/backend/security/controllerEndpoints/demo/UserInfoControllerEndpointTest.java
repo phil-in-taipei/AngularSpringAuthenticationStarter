@@ -1,19 +1,27 @@
 package backend.security.controllerEndpoints.demo;
 
 import backend.security.SecurityApplication;
+import backend.security.models.user.UserEditRequest;
+import backend.security.repositories.user.UserRepository;
+import backend.security.services.user.UserDetailsServiceImplementation;
+import backend.security.utils.TestUtil;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Order;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 //import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = SecurityApplication.class)
@@ -24,6 +32,18 @@ public class UserInfoControllerEndpointTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    UserEditRequest userEditRequest = UserEditRequest.builder()
+            .surname("Testy")
+            .givenName("Update")
+            .email("updated@gmx.com")
+            .build();
+
+    UserEditRequest userReturnToNormalRequest = UserEditRequest.builder()
+            .surname("User")
+            .givenName("Test")
+            .email("test@gmx.com")
+            .build();
 
     @Test
     @Order(1)
@@ -60,5 +80,51 @@ public class UserInfoControllerEndpointTest {
                                 "TestUser"
                         )
                 );
+    }
+
+    @Test
+    @Order(2)
+    @WithUserDetails("TestUser")
+    void editUserInfo() throws Exception {
+        mockMvc.perform(post("/api/user/edit")
+                        .contentType("application/json")
+                        .content(TestUtil.convertObjectToJsonBytes(
+                                userEditRequest)
+                        )
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("givenName")
+                        .value(
+                                "Update"
+                        )
+                )
+                .andExpect(jsonPath("surname")
+                        .value(
+                                "Testy"
+                        )
+                )
+                .andExpect(jsonPath("email")
+                        .value(
+                                "updated@gmx.com"
+                        )
+                )
+                .andExpect(jsonPath("role")
+                        .value(
+                                "USER"
+                        )
+                )
+                .andExpect(jsonPath("username")
+                        .value(
+                                "TestUser"
+                        )
+                );
+        mockMvc.perform(post("/api/user/edit")
+                .contentType("application/json")
+                .content(TestUtil.convertObjectToJsonBytes(
+                        userReturnToNormalRequest)
+                )
+        );
     }
 }

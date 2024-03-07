@@ -3,10 +3,12 @@ package backend.security.controllers.user;
 import backend.security.SecurityApplication;
 import backend.security.models.user.Role;
 import backend.security.models.user.User;
+import backend.security.models.user.UserEditRequest;
 import backend.security.repositories.user.UserRepository;
 import backend.security.services.auth.AuthenticationService;
 import backend.security.services.auth.JwtService;
 import backend.security.services.user.UserDetailsServiceImplementation;
+import backend.security.utils.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,7 +20,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -51,6 +55,13 @@ class UserInfoControllerTest {
             .password("testpassword")
             .role(Role.USER)
             .build();
+
+    UserEditRequest userEditRequest = UserEditRequest.builder()
+            .surname("Update")
+            .givenName("Testy")
+            .email("updated@gmx.com")
+            .build();
+
 
 
     @Test
@@ -90,4 +101,51 @@ class UserInfoControllerTest {
                         )
                 );
     }
+
+    /*
+    @Test
+    @WithMockUser(authorities = {"USER", }, username = "TestUser")
+    void editUserInfo() throws Exception {
+        when(userDetailsService.loadUserByUsername("TestUser"))
+                .thenReturn(testUser);
+        when(userDetailsService.editUserInformation(userEditRequest, testUser))
+                .thenReturn(testUser);
+        mockMvc.perform(post("/api/user/edit")
+                        .contentType("application/json")
+                        .content(TestUtil.convertObjectToJsonBytes(
+                                userEditRequest)
+                        )
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("givenName")
+                        .value(
+                                "Update"
+                        )
+                )
+                .andExpect(jsonPath("surname")
+                        .value(
+                                "Testy"
+                        )
+                )
+                .andExpect(jsonPath("email")
+                        .value(
+                                "updated@gmx.com"
+                        )
+                )
+                .andExpect(jsonPath("role")
+                        .value(
+                                "USER"
+                        )
+                )
+                .andExpect(jsonPath("username")
+                        .value(
+                                "TestUser"
+                        )
+                );
+
+    }
+
+     */
 }
