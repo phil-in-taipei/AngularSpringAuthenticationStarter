@@ -8,11 +8,13 @@ import backend.security.models.errors.ApiError;
 import backend.security.models.user.User;
 import backend.security.models.user.UserEditRequest;
 import backend.security.services.user.UserDetailsServiceImplementation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
@@ -40,6 +42,7 @@ public class UserInfoController {
 
     @GetMapping("/authenticated")
     public ResponseEntity<Object> authenticatedUserInfo(Authentication authentication) {
+        System.out.println("...Calling the get controller method....");
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             return ResponseEntity.ok(userService.loadUserByUsername(userDetails.getUsername()));
