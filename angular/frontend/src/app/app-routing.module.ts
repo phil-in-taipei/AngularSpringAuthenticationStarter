@@ -14,15 +14,8 @@ const routes: Routes = [
   { 
     path: 'authenticated-user', 
     loadChildren: () => import('./authenticated-user/authenticated-user.module')
-      .then(m => m.AuthenticatedUserModule), 
-    canActivate: [AuthGuard] 
-  },  
-  {
-    path        : '**',
-    pathMatch   : 'full',
-    redirectTo: '',
-  }
-
+    .then(m => m.AuthenticatedUserModule), canActivate: [AuthGuard] 
+  },
 ];
 
 @NgModule({
