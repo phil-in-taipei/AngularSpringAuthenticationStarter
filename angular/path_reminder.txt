@@ -4,7 +4,7 @@ ng build --prod --output-path ../../spring/backend/src/main/resources/static/js/
 
 ng build --aot --prod --output-hashing none
 
-ng build --output-path ../../spring/backend/src/main/resources/static/js/angular --output-hashing none --watch
+ng build --output-path ../../spring/backend/src/main/resources/static/js/angular --named-chunks --output-hashing none --watch
 
 ng build --output-path ../../spring/backend/src/main/resources/static/js/angular --build-optimizer=false --configuration=development
 
