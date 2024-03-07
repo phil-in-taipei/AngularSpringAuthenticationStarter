@@ -1,4 +1,3 @@
-/*
 package backend.security.config;
 
 
@@ -20,4 +19,3 @@ public class WebConfig implements WebMvcConfigurer {
         // Adjust allowed methods as needed
     }
 }
-*/
