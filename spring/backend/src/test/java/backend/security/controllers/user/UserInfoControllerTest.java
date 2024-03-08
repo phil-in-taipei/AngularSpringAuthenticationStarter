@@ -29,8 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -124,7 +123,7 @@ class UserInfoControllerTest {
         when(userRepository.save(testUser)).thenReturn(testUser);
         when(userDetailsService.editUserInformation(userEditRequest, testUser))
                 .thenReturn(testUser);
-        MockHttpServletRequestBuilder request = post(
+        MockHttpServletRequestBuilder request = patch(
                 "/api/user/edit")
                 .contentType("application/json")
                 .with(csrf())

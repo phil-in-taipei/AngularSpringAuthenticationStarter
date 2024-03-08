@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AppState } from '../../../reducers';
-import {select, Store} from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { 
   UserProfileEditModel, UserProfileModel 

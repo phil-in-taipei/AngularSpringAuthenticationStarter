@@ -35,11 +35,14 @@ export class UserService {
   editUserProfile(
     submissionForm:UserProfileEditModel
     ): Observable<UserProfileModel> {
-    //console.log('submitting revised user profile ....');
+    console.log('submitting revised user profile ....');
     let token = this.authService.getAuthToken();
-    //console.log(token);
+    console.log("--------------------------------------")
+    console.log(token);
+    console.log(submissionForm);
+    console.log("--------------------------------------")
     return this.http.patch<UserProfileModel>(
-      `${environment.apiUrl}/api/user/update`, submissionForm,
+      `${environment.apiUrl}/api/user/edit`, submissionForm,
       {
         headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` })
       });

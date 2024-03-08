@@ -51,7 +51,7 @@ public class UserInfoController {
         }
     }
 
-    @PostMapping("/edit")
+    @PatchMapping("/edit")
     public ResponseEntity<Object> editUserInfo(
             @RequestBody UserEditRequest userEditRequest,
             Authentication authentication

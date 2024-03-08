@@ -1,9 +1,7 @@
-package backend.security.controllerEndpoints.demo;
+package backend.security.controllerEndpoints.user;
 
 import backend.security.SecurityApplication;
 import backend.security.models.user.UserEditRequest;
-import backend.security.repositories.user.UserRepository;
-import backend.security.services.user.UserDetailsServiceImplementation;
 import backend.security.utils.TestUtil;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -11,16 +9,13 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Order;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 //import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -86,7 +81,7 @@ public class UserInfoControllerEndpointTest {
     @Order(2)
     @WithUserDetails("TestUser")
     void editUserInfo() throws Exception {
-        mockMvc.perform(post("/api/user/edit")
+        mockMvc.perform(patch("/api/user/edit")
                         .contentType("application/json")
                         .content(TestUtil.convertObjectToJsonBytes(
                                 userEditRequest)
