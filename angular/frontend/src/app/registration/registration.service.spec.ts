@@ -13,7 +13,7 @@ import {
 } 
   from '../test-data/registration-tests/registration-data';
 
-fdescribe('RegistrationService', () => {
+describe('RegistrationService', () => {
   let service: RegistrationService;
   let httpTestingController: HttpTestingController;
 
