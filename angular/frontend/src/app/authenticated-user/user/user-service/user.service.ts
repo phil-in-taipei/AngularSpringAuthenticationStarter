@@ -21,7 +21,6 @@ export class UserService {
   ) { }
 
   fetchUserProfile(): Observable<UserProfileModel> {
-    console.log('fetching user profile ....');
     let token = this.authService.getAuthToken();
     return this.http.get<UserProfileModel>(
       `${environment.apiUrl}/api/user/authenticated`,
@@ -35,12 +34,7 @@ export class UserService {
   editUserProfile(
     submissionForm:UserProfileEditModel
     ): Observable<UserProfileModel> {
-    console.log('submitting revised user profile ....');
     let token = this.authService.getAuthToken();
-    console.log("--------------------------------------")
-    console.log(token);
-    console.log(submissionForm);
-    console.log("--------------------------------------")
     return this.http.patch<UserProfileModel>(
       `${environment.apiUrl}/api/user/edit`, submissionForm,
       {
