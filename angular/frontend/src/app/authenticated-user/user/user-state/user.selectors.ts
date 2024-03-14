@@ -9,6 +9,11 @@ export const selectUserProfile = createSelector(
   UserProfileState => UserProfileState.usrProfile
 );
 
+export const selectUserProfileLoaded = createSelector(
+  selectUserProfileState,
+  UserProfileState => UserProfileState.userProfileLoaded
+);
+
 export const userProfileSubmissionErrorMsg = createSelector(
   selectUserProfileState,
   userProfileState => userProfileState.errorMessage
